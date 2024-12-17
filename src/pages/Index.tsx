@@ -12,6 +12,13 @@ const yogaPoses = [
   // Add more poses as needed
 ];
 
+// Dummy video URLs for each pose (replace these with actual URLs later)
+const poseVideos: Record<string, string> = {
+  adho_mukha_svanasana: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+  alonasana: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+  anjaneyasana: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+};
+
 const Index = () => {
   const { toast } = useToast();
   const [selectedPose, setSelectedPose] = useState("");
@@ -42,7 +49,7 @@ const Index = () => {
       
       // Start reference video if available
       if (referenceVideoRef.current) {
-        referenceVideoRef.current.src = `/poses/${selectedPose}.mp4`;
+        referenceVideoRef.current.src = poseVideos[selectedPose];
         referenceVideoRef.current.play();
       }
       
@@ -152,11 +159,12 @@ const Index = () => {
             <Card className="p-4">
               <h3 className="text-lg font-semibold mb-2">Reference Video</h3>
               <AspectRatio ratio={16/9} className="bg-gray-200 rounded-lg overflow-hidden">
-                <video
-                  ref={referenceVideoRef}
-                  className="w-full h-full object-cover"
-                  loop
-                  playsInline
+                <iframe
+                  src={selectedPose ? poseVideos[selectedPose] : ''}
+                  title="Reference Video"
+                  className="w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
                 />
               </AspectRatio>
             </Card>
