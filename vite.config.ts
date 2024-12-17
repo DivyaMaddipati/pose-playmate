@@ -10,16 +10,7 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
   },
   plugins: [
-    react({
-      jsxRuntime: 'automatic',
-      plugins: [
-        ['@swc/plugin-transform-typescript', {
-          target: 'es2015',
-          syntax: 'typescript',
-          tsx: true
-        }]
-      ]
-    }),
+    react(),
     mode === 'development' &&
     componentTagger(),
   ].filter(Boolean),
@@ -28,7 +19,6 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  // Add build options for better compatibility
   build: {
     target: 'es2015',
     sourcemap: true,
