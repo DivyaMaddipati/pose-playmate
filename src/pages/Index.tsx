@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card } from "@/components/ui/card"
 import { useToast } from "@/components/ui/use-toast"
+import { AspectRatio } from "@/components/ui/aspect-ratio"
 
 const yogaPoses = [
   { value: "adho_mukha_svanasana", label: "Adho Mukha Svanasana" },
@@ -17,6 +18,7 @@ const Index = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [duration, setDuration] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const referenceVideoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
   useEffect(() => {
@@ -37,6 +39,13 @@ const Index = () => {
       }
       streamRef.current = stream;
       setIsRecording(true);
+      
+      // Start reference video if available
+      if (referenceVideoRef.current) {
+        referenceVideoRef.current.src = `/poses/${selectedPose}.mp4`;
+        referenceVideoRef.current.play();
+      }
+      
       toast({
         title: "Camera Started",
         description: "Your camera feed is now active.",
@@ -56,6 +65,13 @@ const Index = () => {
       streamRef.current.getTracks().forEach(track => track.stop());
       setIsRecording(false);
       setDuration(0);
+      
+      // Stop reference video
+      if (referenceVideoRef.current) {
+        referenceVideoRef.current.pause();
+        referenceVideoRef.current.currentTime = 0;
+      }
+      
       toast({
         title: "Recording Stopped",
         description: "Your session has been ended.",
@@ -79,13 +95,13 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-8">
-      <div className="max-w-6xl mx-auto space-y-8">
+      <div className="max-w-7xl mx-auto space-y-8">
         <div className="text-center space-y-4">
           <h1 className="text-4xl font-bold text-gray-900">Yoga Pose Validator</h1>
           <p className="text-gray-600">Select a pose and start practicing</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 gap-8">
           <Card className="p-6 space-y-6">
             <div className="space-y-4">
               <label className="block text-sm font-medium text-gray-700">
@@ -132,16 +148,31 @@ const Index = () => {
             )}
           </Card>
 
-          <Card className="p-6">
-            <div className="aspect-video bg-gray-200 rounded-lg overflow-hidden">
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </Card>
+          <div className="grid grid-cols-2 gap-4">
+            <Card className="p-4">
+              <h3 className="text-lg font-semibold mb-2">Reference Video</h3>
+              <AspectRatio ratio={16/9} className="bg-gray-200 rounded-lg overflow-hidden">
+                <video
+                  ref={referenceVideoRef}
+                  className="w-full h-full object-cover"
+                  loop
+                  playsInline
+                />
+              </AspectRatio>
+            </Card>
+
+            <Card className="p-4">
+              <h3 className="text-lg font-semibold mb-2">Your Camera</h3>
+              <AspectRatio ratio={16/9} className="bg-gray-200 rounded-lg overflow-hidden">
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  playsInline
+                  className="w-full h-full object-cover"
+                />
+              </AspectRatio>
+            </Card>
+          </div>
         </div>
       </div>
     </div>
