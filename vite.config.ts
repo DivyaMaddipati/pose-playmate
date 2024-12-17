@@ -11,16 +11,14 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react({
-      // Configure SWC to handle older Node.js versions
-      swcOptions: {
-        jsc: {
-          target: "es2015",
-          parser: {
-            syntax: "typescript",
-            tsx: true,
-          },
-        },
-      },
+      jsxRuntime: 'automatic',
+      plugins: [
+        ['@swc/plugin-transform-typescript', {
+          target: 'es2015',
+          syntax: 'typescript',
+          tsx: true
+        }]
+      ]
     }),
     mode === 'development' &&
     componentTagger(),
