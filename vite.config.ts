@@ -10,7 +10,18 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
   },
   plugins: [
-    react(),
+    react({
+      // Configure SWC to handle older Node.js versions
+      swcOptions: {
+        jsc: {
+          target: "es2015",
+          parser: {
+            syntax: "typescript",
+            tsx: true,
+          },
+        },
+      },
+    }),
     mode === 'development' &&
     componentTagger(),
   ].filter(Boolean),
@@ -18,5 +29,10 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+  },
+  // Add build options for better compatibility
+  build: {
+    target: 'es2015',
+    sourcemap: true,
   },
 }));
