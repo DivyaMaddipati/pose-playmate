@@ -12,12 +12,7 @@ const yogaPoses = [
   // Add more poses as needed
 ];
 
-// Dummy video URLs for each pose (replace these with actual URLs later)
-const poseVideos: Record<string, string> = {
-  adho_mukha_svanasana: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-  alonasana: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-  anjaneyasana: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-};
+const API_URL = 'http://localhost:5000';
 
 const Index = () => {
   const { toast } = useToast();
@@ -48,8 +43,8 @@ const Index = () => {
       setIsRecording(true);
       
       // Start reference video if available
-      if (referenceVideoRef.current) {
-        referenceVideoRef.current.src = poseVideos[selectedPose];
+      if (referenceVideoRef.current && selectedPose) {
+        referenceVideoRef.current.src = `${API_URL}/videos/${selectedPose}.mp4`;
         referenceVideoRef.current.play();
       }
       
@@ -88,6 +83,9 @@ const Index = () => {
 
   const handlePoseSelect = (value: string) => {
     setSelectedPose(value);
+    if (referenceVideoRef.current) {
+      referenceVideoRef.current.src = `${API_URL}/videos/${value}.mp4`;
+    }
     toast({
       title: "Pose Selected",
       description: `Selected pose: ${yogaPoses.find(pose => pose.value === value)?.label}`,
@@ -159,12 +157,10 @@ const Index = () => {
             <Card className="p-4">
               <h3 className="text-lg font-semibold mb-2">Reference Video</h3>
               <AspectRatio ratio={16/9} className="bg-gray-200 rounded-lg overflow-hidden">
-                <iframe
-                  src={selectedPose ? poseVideos[selectedPose] : ''}
-                  title="Reference Video"
-                  className="w-full h-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
+                <video
+                  ref={referenceVideoRef}
+                  controls
+                  className="w-full h-full object-cover"
                 />
               </AspectRatio>
             </Card>

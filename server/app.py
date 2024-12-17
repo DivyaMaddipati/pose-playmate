@@ -1,10 +1,11 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import cv2
 import mediapipe as mp
 import numpy as np
 import pandas as pd
 import time
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -15,6 +16,11 @@ pose = mp_pose.Pose()
 
 # Load dataset
 dataset = pd.read_csv("yoga_poses_dataset.csv")
+
+# Add route to serve video files
+@app.route('/videos/<path:filename>')
+def serve_video(filename):
+    return send_from_directory('videos', filename)
 
 def calculate_angle(a, b, c):
     a = np.array(a)
